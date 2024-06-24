@@ -4,6 +4,6 @@
 <span></span>
 
   
- <h2>Lenguajes y manejo de BD como :</h2>
+ <h2 align="center">Lenguajes y manejo de BD como :</h2>
  <img src="https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white"> y  <img src="https://img.shields.io/badge/MySQL-00000F?style=for-the-badge&logo=mysql&logoColor=white">
 
