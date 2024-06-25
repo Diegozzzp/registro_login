@@ -40,7 +40,7 @@ mysqli_close($conexion);
             <p class="p-2 text-lg">Email: <?php echo htmlspecialchars($email); ?></p>
             <p class="p-2 text-lg">Teléfono: <?php echo htmlspecialchars($phone); ?></p>
             <p class="p-2 text-lg">Fecha de Registro: <?php echo htmlspecialchars($created_at); ?></p>
-            <a href="usuarios-edit.php?id=?" class="p-2 bg-green-500 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded m-2">Editar</a>
+            <a href="usuarios-edit.php?id=<?php echo $id; ?>" class="p-2 bg-green-500 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded m-2">Editar</a>
             <a href="cerrar-sesion.php" class="p-2 bg-red-500 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded m-2">Cerrar sesión</a>
     </div>
 </div>

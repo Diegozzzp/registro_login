@@ -2,14 +2,16 @@
 session_start();
 require 'config.php';
 
-// Verificar si el usuario está autenticado y es administrador
 if (!isset($_SESSION['id'])) {
     header("location: login.php");
     exit;
 }
 
-if (isset($_SESSION['id']) && is_numeric($_SESSION['id'])) {
-    $id = $_SESSION['id'];
+$user_id = $_SESSION['id'];
+$user_role = $_SESSION['role'];
+
+if (isset($_GET['id']) && is_numeric($_GET['id'])) {
+    $id = $_GET['id'];
 
     // Obtener los detalles del usuario a editar
     $sql = "SELECT first_name, last_name, email, phone FROM users WHERE id = ?";
@@ -42,22 +44,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = trim($_POST['email']);
     $phone = trim($_POST['phone']);
     
-    $sql = "UPDATE users SET first_name = ?, last_name = ?, email = ?, phone = ? WHERE id = ?";
-    
-    if ($stmt = mysqli_prepare($conexion, $sql)) {
-        mysqli_stmt_bind_param($stmt, "ssssi", $first_name, $last_name, $email, $phone, $id);
+    // Verificar permisos: el usuario puede editar su perfil o el admin puede editar cualquier perfil
+    if ($user_role === 'Admin' || $user_id == $id) {
+        $sql = "UPDATE users SET first_name = ?, last_name = ?, email = ?, phone = ? WHERE id = ?";
         
-        if (mysqli_stmt_execute($stmt)) {
-            // Redirigir a la tabla de usuarios después de la actualización
-            header("location: admin-usuarios.php");
-            exit;
+        if ($stmt = mysqli_prepare($conexion, $sql)) {
+            mysqli_stmt_bind_param($stmt, "ssssi", $first_name, $last_name, $email, $phone, $id);
+            
+            if (mysqli_stmt_execute($stmt)) {
+                // Redirigir según el rol del usuario
+                if ($user_role === 'Admin') {
+                    header("location: users.php");
+                } else {
+                    header("location: profile.php");
+                }
+                exit;
+            } else {
+                echo "Error al ejecutar la actualización: " . mysqli_error($conexion);
+            }
+            
+            mysqli_stmt_close($stmt);
         } else {
-            echo "Error al ejecutar la actualización: " . mysqli_error($conexion);
+            echo "Error al preparar la consulta: " . mysqli_error($conexion);
         }
-        
-        mysqli_stmt_close($stmt);
     } else {
-        echo "Error al preparar la consulta: " . mysqli_error($conexion);
+        echo "No tienes permiso para editar este perfil.";
+        exit;
     }
 }
 
@@ -68,28 +80,23 @@ mysqli_close($conexion);
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <script src="https://cdn.tailwindcss.com"></script>
     <title>Editar Usuario</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="w-screen h-screen justify-center items-center flex bg-[url('./image/bg-edits.jpg')] bg-cover bg-no-repeat"> 
-    <form class="w-[400px] p-2 m-8 bg-gray-800/[0.5] text-center  flex flex-col items-center justify-center" action="usuarios-edit.php" method="post">
-        <h1 class="text-white font-bold text-3xl mb-4">Editar usuario</h1>
-    <p class="text-red-500 mb-4 font-semibold "><?php if (isset($login_err)) echo $login_err?></p>
-        <div>
-            <input value="<?php echo htmlspecialchars($first_name); ?>" type="text" name="first_name" required class="w-[100%] block m-auto mb-4  bg-transparent border-b border-b-white border-b text-center outline-none p-2 text-lg text-white">
-        </div>
-        <div>
-            <input value="<?php echo htmlspecialchars($last_name); ?>" type="text" name="last_name" required class="w-[100%] block m-auto mb-4  bg-transparent border-b border-b-white border-b text-center outline-none p-2 text-lg text-white">
-        </div>
-        <div>
-            <input value="<?php echo htmlspecialchars($email); ?>" type="email" name="email" required class="w-[100%] block m-auto mb-4  bg-transparent border-b border-b-white border-b text-center outline-none p-2 text-lg text-white">
-        </div>
-        <div>
-            <input value="<?php echo htmlspecialchars($phone); ?>" type="text" name="phone" required class="w-[100%] block m-auto mb-4  bg-transparent border-b border-b-white border-b text-center outline-none p-2 text-lg text-white">
-        </div>
-        <div>
-            <button type="submit" class="border-solid p-[.6rem] rounded-[2rem] bg-white font-bold mt-[1rem] text-[1rem] text-black pointer hover: ease-in duration-300 hover:bg-green-400">Realizar actualización</button>
-        </div>
+<body class="w-screen h-screen justify-center items-center flex">
+    <form action="usuarios-edit.php?id=<?php echo $id; ?>" method="post" class=" w-[400px] p-2 m-6 bg-gray-500/[0.5] text-center flex flex-col items-center justify-center">
+    <h2 class="p-[2.0rem] font-semibold text-3xl">Editar Usuario</h2>    
+    
+        <input type="text" name="first_name" value="<?php echo htmlspecialchars($first_name); ?>" required class="w-[70%] block mt-2 m-auto mb-4  bg-transparent border-b border-b-white border-b text-center outline-none p-2 text-lg text-white">
+       
+        <input type="text" name="last_name" value="<?php echo htmlspecialchars($last_name); ?>" required class="w-[70%] block m-auto mb-4  bg-transparent border-b border-b-white border-b text-center outline-none p-2 text-lg text-white">
+       
+        <input type="email" name="email" value="<?php echo htmlspecialchars($email); ?>" required class="w-[70%] block m-auto mb-4  bg-transparent border-b border-b-white border-b text-center outline-none p-2 text-lg text-white">
+        
+        <input type="text" name="phone" value="<?php echo htmlspecialchars($phone); ?>" class="w-[70%] block m-auto mb-4  bg-transparent border-b border-b-white border-b text-center outline-none p-2 text-lg text-white">
+    
+        <button type="submit" value="Actualizar" class="w-[60%] m-auto border-solid p-[.7rem] rounded-[2rem] bg-white font-bold mt-[1.5rem] text-[.8rem] pointer text-black hover: ease-in duration-300 hover:bg-green-400"> Actualizar </button>
+        
     </form>
 </body>
 </html>
