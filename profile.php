@@ -31,7 +31,7 @@ mysqli_close($conexion);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body class="h-screen w-screen ">
-<div class="w-full h-full flex items-center justify-center">
+<div class="w-full h-full flex items-center justify-center bg-[url('./image/bg-edits.jpg')] bg-cover bg-no-repeat">
     <div class=" flex flex-col items-center bg-gray-100 max-w-[400px] h-[400px]">
         <i class="fa-solid fa-circle-user text-8xl mt-3" style="color: #000000;"></i>
             <h1 class="text-2xl font-bold p-2 ">Bienvenid@, <?php echo htmlspecialchars ($_SESSION['primer_nombre']); ?></h1>

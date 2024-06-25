@@ -83,8 +83,8 @@ mysqli_close($conexion);
     <title>Editar Usuario</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="w-screen h-screen justify-center items-center flex">
-    <form action="usuarios-edit.php?id=<?php echo $id; ?>" method="post" class=" w-[400px] p-2 m-6 bg-gray-500/[0.5] text-center flex flex-col items-center justify-center">
+<body class="w-screen h-screen justify-center items-center flex bg-[url('./image/edits-admin.jpg')] bg-cover bg-no-repeat">
+    <form action="usuarios-edit.php?id=<?php echo $id; ?>" method="post" class=" w-[400px] p-2 m-6 bg-gray-700/[0.5] text-center flex flex-col items-center justify-center">
     <h2 class="p-[2.0rem] font-semibold text-3xl">Editar Usuario</h2>    
     
         <input type="text" name="first_name" value="<?php echo htmlspecialchars($first_name); ?>" required class="w-[70%] block mt-2 m-auto mb-4  bg-transparent border-b border-b-white border-b text-center outline-none p-2 text-lg text-white">
